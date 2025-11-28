@@ -1,9 +1,406 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 <head>
-    <title>Hello World</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Elegant Beauty — Makeup Artist</title>
+  <meta name="description" content="Professional makeup artist portfolio & booking site" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; /* deep navy */
+      --card:#0b1220;
+      --accent:#ff6b81; /* warm pink */
+      --muted:#9aa4b2;
+      --glass: rgba(255,255,255,0.04);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Montserrat,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;background:linear-gradient(180deg,var(--bg),#071021);color:#e6eef6;line-height:1.45;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+
+    /* Navbar */
+    .nav{position:sticky;top:0;backdrop-filter: blur(6px);background:linear-gradient(180deg, rgba(11,18,32,0.6), rgba(11,18,32,0.35));padding:12px 6vw;display:flex;align-items:center;justify-content:space-between;z-index:40}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#ff9db1);display:flex;align-items:center;justify-content:center;color:#081226;font-weight:700;font-family:'Playfair Display',serif}
+    .nav-links{display:flex;gap:18px;align-items:center}
+    .btn{background:var(--accent);color:#071226;padding:9px 14px;border-radius:12px;font-weight:600;box-shadow:0 10px 30px rgba(255,107,129,0.12);transition:transform .18s ease}
+    .btn:active{transform:translateY(1px)}
+
+    /* Hero */
+    .hero{display:grid;grid-template-columns:1fr 480px;gap:40px;padding:56px 6vw;align-items:center}
+    .hero-left h1{font-family:'Playfair Display',serif;font-size:48px;margin:0 0 12px;color:#fff;line-height:1.02}
+    .hero-left p{color:var(--muted);margin:0 0 18px}
+    .cta-row{display:flex;gap:14px;align-items:center}
+    .stats{display:flex;gap:18px;margin-top:26px}
+    .stat{background:var(--glass);padding:12px 16px;border-radius:12px;color:var(--muted);font-size:14px}
+
+    .hero-right{border-radius:18px;overflow:hidden;box-shadow:0 40px 80px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.03);height:420px}
+    .hero-right img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .8s ease}
+    .hero-right:hover img{transform:scale(1.04)}
+
+    /* Services */
+    .services{padding:42px 6vw;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+    .service{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:22px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);transition:transform .22s ease,box-shadow .22s ease}
+    .service:hover{transform:translateY(-8px);box-shadow:0 18px 40px rgba(2,6,23,0.6)}
+    .service h3{margin:0 0 8px}
+    .service p{color:var(--muted);margin:0}
+
+    /* Gallery */
+    .gallery-wrap{padding:42px 6vw}
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+    .tile{position:relative;border-radius:12px;overflow:hidden;cursor:pointer}
+    .tile img{width:100%;height:220px;object-fit:cover;display:block;transition:transform .35s ease,filter .35s ease}
+    .tile:hover img{transform:scale(1.06);filter:brightness(1.03)}
+    .tile .label{position:absolute;left:12px;bottom:12px;background:linear-gradient(90deg, rgba(0,0,0,0.6), rgba(0,0,0,0.25));padding:8px 10px;border-radius:8px;font-weight:600}
+
+    /* Testimonials & Contact */
+    .sections{display:grid;grid-template-columns:1fr 440px;gap:28px;padding:42px 6vw 120px}
+    .card{background:var(--card);padding:20px;border-radius:14px;border:1px solid rgba(255,255,255,0.03)}
+    .testimonial{margin-bottom:12px}
+    .contact input,.contact textarea{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit;margin-bottom:10px}
+    .contact label{color:var(--muted);font-size:13px}
+    .note{font-size:12px;color:var(--muted);margin-top:8px}
+
+    footer{padding:20px 6vw;border-top:1px solid rgba(255,255,255,0.02);color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+    /* Modal */
+    .modal{position:fixed;inset:0;background:rgba(2,6,23,0.6);display:none;align-items:center;justify-content:center;padding:24px;z-index:60}
+    .modal.open{display:flex}
+    .modal-card{max-width:900px;width:100%;border-radius:12px;overflow:hidden;background:#071226;padding:18px}
+    .modal-card img{width:100%;height:520px;object-fit:cover}
+
+    /* Small widgets */
+    .toast{position:fixed;right:20px;bottom:20px;background:linear-gradient(90deg,var(--accent),#ff9db1);color:#071226;padding:12px 16px;border-radius:12px;font-weight:700;box-shadow:0 18px 40px rgba(0,0,0,0.6);transform:translateY(16px);opacity:0;transition:all .35s ease}
+    .toast.show{transform:translateY(0);opacity:1}
+
+    /* Approval panel (owner view) */
+    .approve-wrap{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:40px}
+    .approve-card{background:var(--card);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);max-width:720px;width:100%}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr;gap:22px}
+      .sections{grid-template-columns:1fr}
+      .hero-right{height:320px}
+    }
+    @media (max-width:520px){
+      .hero-left h1{font-size:28px}
+      .tile img{height:160px}
+      .hero-right{height:220px}
+    }
+  </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+  <nav class="nav">
+    <div class="brand">
+      <div class="logo">EB</div>
+      <div>
+        <div style="font-weight:700">Elegant Beauty</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:2px">Makeup Artist & Bridal Specialist</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#gallery">Portfolio</a>
+      <a href="#contact">Contact</a>
+      <a class="btn" href="#contact">Book Now</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-left">
+      <h1>Glow, Glam & Grace —
+        <br><span style="color:var(--accent)">Professional Makeup Artist</span>
+      </h1>
+      <p>Bridal makeup, glam looks, editorial shoots — I craft beautiful looks that last through the day and shine in photos.</p>
+      <div class="cta-row">
+        <a class="btn" href="#contact">Request Booking</a>
+        <a style="padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);" href="#gallery">See Portfolio</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat">⭐ 4.9 Rating</div>
+        <div class="stat">💍 500+ Weddings</div>
+        <div class="stat">📸 1k+ Photoshoots</div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- cover image (assistant-chosen picture links) -->
+      <img src="https://picsum.photos/seed/makeup1/1400/900" alt="makeup hero">
+    </div>
+  </header>
+
+  <section id="services" class="services">
+    <div class="service card">
+      <h3>Bridal Makeup</h3>
+      <p>Customized bridal looks, trial sessions, and full-day on-call service to keep you glowing.</p>
+    </div>
+    <div class="service card">
+      <h3>Glam & Party</h3>
+      <p>Blingy evening looks, red-carpet glamour, and soft glam for every event.</p>
+    </div>
+    <div class="service card">
+      <h3>Editorial & Photoshoots</h3>
+      <p>High-fashion and editorial makeup designed to photograph beautifully.</p>
+    </div>
+    <div class="service card">
+      <h3>HD & Airbrush</h3>
+      <p>Flawless finish with HD-friendly makeup and long-lasting airbrush techniques.</p>
+    </div>
+  </section>
+
+  <section id="gallery" class="gallery-wrap">
+    <h2 style="padding:0 6vw;margin:0 0 12px;font-family:'Playfair Display',serif">Portfolio</h2>
+    <div class="gallery">
+      <div class="tile" data-img="https://picsum.photos/seed/makeup2/1200/900"><img src="https://picsum.photos/seed/makeup2/800/600" alt="look1"><div class="label">Bridal Glow</div></div>
+      <div class="tile" data-img="https://picsum.photos/seed/makeup3/1200/900"><img src="https://picsum.photos/seed/makeup3/800/600" alt="look2"><div class="label">Smokey Eye</div></div>
+      <div class="tile" data-img="https://picsum.photos/seed/makeup4/1200/900"><img src="https://picsum.photos/seed/makeup4/800/600" alt="look3"><div class="label">Natural Glam</div></div>
+      <div class="tile" data-img="https://picsum.photos/seed/makeup5/1200/900"><img src="https://picsum.photos/seed/makeup5/800/600" alt="look4"><div class="label">Editorial</div></div>
+      <div class="tile" data-img="https://picsum.photos/seed/makeup6/1200/900"><img src="https://picsum.photos/seed/makeup6/800/600" alt="look5"><div class="label">Bold Lips</div></div>
+      <div class="tile" data-img="https://picsum.photos/seed/makeup7/1200/900"><img src="https://picsum.photos/seed/makeup7/800/600" alt="look6"><div class="label">Bridesmaid</div></div>
+    </div>
+  </section>
+
+  <!-- Main sections or approval view -->
+  <main id="mainContent">
+    <section class="sections">
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0">What clients say</h3>
+          <div class="testimonial">
+            <strong>Aisha K.</strong>
+            <p style="margin:6px 0 0;color:var(--muted)">"Elegant Beauty made me feel like a queen on my wedding day — long-lasting and picture-perfect!"</p>
+          </div>
+          <div class="testimonial">
+            <strong>Rohit & Priya</strong>
+            <p style="margin:6px 0 0;color:var(--muted)">"Professional, punctual and so creative — loved every look."</p>
+          </div>
+        </div>
+
+        <div style="height:18px"></div>
+
+        <div class="card">
+          <h3 style="margin-top:0">Pricing (sample)</h3>
+          <ul style="color:var(--muted);margin:8px 0 0;padding-left:18px">
+            <li>Bridal package — ₹15,000 (includes trial & on-site)</li>
+            <li>Party / Event look — ₹3,500 onwards</li>
+            <li>Photoshoot (editorial) — ₹7,000 onwards</li>
+          </ul>
+        </div>
+      </div>
+
+      <aside class="card contact" id="contact">
+        <h3 style="margin-top:0">Book an appointment</h3>
+        <form id="contactForm">
+          <label for="name">Full name</label>
+          <input id="name" name="name" required placeholder="Your name">
+
+          <label for="insta">Instagram (optional)</label>
+          <input id="insta" name="insta" placeholder="@yourhandle">
+
+          <label for="date">Date (approx.)</label>
+          <input id="date" name="date" type="date">
+
+          <label for="service">Select service</label>
+          <select id="service" name="service" style="width:100%;padding:10px;border-radius:10px;margin-bottom:10px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:inherit">
+            <option>Bridal Makeup</option>
+            <option>Glam / Party</option>
+            <option>Editorial / Photoshoot</option>
+            <option>HD / Airbrush</option>
+          </select>
+
+          <label for="whatsapp">WhatsApp number (with country code)</label>
+          <input id="whatsapp" name="whatsapp" required placeholder="e.g. +919812345678">
+
+          <label for="message">Tell me about the look</label>
+          <textarea id="message" name="message" rows="4" placeholder="Bridal / glam / editorial..."></textarea>
+
+          <button type="submit" class="btn" style="width:100%;margin-top:10px">Book via WhatsApp</button>
+        </form>
+        <div class="note">After you submit: you'll see a confirmation on screen. We'll open a WhatsApp message for you to send to the owner so they get instant notification. (No backend required)</div>
+
+        <div style="margin-top:12px;display:flex;gap:10px">
+          <a id="instaLink" class="small" href="https://instagram.com" target="_blank">Instagram</a>
+          <a id="fbLink" class="small" href="https://facebook.com" target="_blank">Facebook</a>
+          <a id="waOwner" class="small" href="https://wa.me/+919876543210" target="_blank">Owner WhatsApp</a>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div style="padding:18px;color:var(--muted)">
+        <h3 id="modalTitle" style="margin-top:0;color:#fff"></h3>
+        <p id="modalBody"></p>
+        <div style="margin-top:12px;display:flex;gap:10px">
+          <button id="modalClose" class="btn">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Booked successfully</div>
+
+  <footer>
+    <div>© <strong>Elegant Beauty</strong> — Makeup Artist</div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a id="finsta" href="https://instagram.com/yourprofile" target="_blank">Instagram</a>
+      <a id="ffb" href="https://facebook.com/yourpage" target="_blank">Facebook</a>
+      <a id="fwa" href="https://wa.me/+919798645894" target="_blank">WhatsApp</a>
+    </div>
+  </footer>
+
+  <script>
+    // ========== Configuration ==========
+    // Change this to the owner's WhatsApp number (with country code, no spaces)
+    const OWNER_WHATSAPP = '+919798645894';
+
+    // ========== Helper: URL params (for owner approve view) ==========
+    function q(name){
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name);
+    }
+
+    // If page opened with approve params -> show owner approve UI
+    const approveId = q('approve');
+    const approveCustomer = q('customer');
+    if(approveId && approveCustomer){
+      // show a dedicated approval panel
+      document.getElementById('mainContent').innerHTML = `
+        <div class="approve-wrap">
+          <div class="approve-card">
+            <h2 style="margin-top:0">Approve Booking</h2>
+            <p class="small">Booking ID: <strong>${approveId}</strong></p>
+            <p class="small">Customer WhatsApp: <strong>${approveCustomer}</strong></p>
+            <p class="small">Name: <strong>${decodeURIComponent(q('name')||'')}</strong></p>
+            <p class="small">Date: <strong>${decodeURIComponent(q('date')||'')}</strong></p>
+            <p style="margin-top:12px">Click <strong>Approve</strong> to send confirmation to the customer via WhatsApp.</p>
+            <div style="margin-top:14px;display:flex;gap:10px">
+              <button id="approveBtn" class="btn">Approve & Send WhatsApp</button>
+              <a href="/" class="btn" style="background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)">Cancel</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('approveBtn').addEventListener('click', ()=>{
+        const cust = approveCustomer.replace(/[^+0-9]/g,'');
+        const message = encodeURIComponent(`Hello! Your booking (ID: ${approveId}) is APPROVED. See you on ${decodeURIComponent(q('date')||'soon')} — Elegant Beauty`);
+        window.open(`https://wa.me/${cust}?text=${message}`,'_blank');
+      });
+    }
+
+    // ========== Gallery modal ==========
+    document.querySelectorAll('.tile').forEach(t => {
+      t.addEventListener('click', () => {
+        const src = t.getAttribute('data-img');
+        const modal = document.getElementById('modal');
+        document.getElementById('modalImg')?.setAttribute('src', src);
+        document.getElementById('modalTitle').innerText = t.querySelector('.label').innerText;
+        document.getElementById('modalBody').innerText = '';
+        modal.classList.add('open');
+      })
+    })
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if(e.target.id === 'modal' || e.target.id === 'modalClose'){
+        document.getElementById('modal').classList.remove('open');
+        document.getElementById('modalImg')?.setAttribute('src','');
+      }
+    })
+
+    // ========== Booking form behavior ==========
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const insta = form.insta.value.trim();
+      const date = form.date.value || 'Not specified';
+      const service = form.service.value;
+      let whatsapp = form.whatsapp.value.trim();
+      const message = form.message.value.trim();
+      if(!name || !whatsapp){
+        alert('Please enter name and WhatsApp number');
+        return;
+      }
+      // Normalize number
+      whatsapp = whatsapp.replace(/[^+0-9]/g,'');
+
+      // create a simple booking id
+      const bookingId = 'EB' + Date.now().toString(36).slice(-6).toUpperCase();
+
+      // Show on-site popup & toast
+      showToast('Booked successfully — ID: ' + bookingId);
+      openModal('Booking received','We have prepared a WhatsApp message so you can notify the owner instantly. Click the WhatsApp window that opened (or tap Send)');
+
+      // Build message to owner (pre-filled). It includes an approval link that owner can tap.
+      // Approval link points back here with query params so owner can approve and then send customer message.
+      const approveLink = `${location.origin}${location.pathname}?approve=${encodeURIComponent(bookingId)}&customer=${encodeURIComponent(whatsapp)}&name=${encodeURIComponent(name)}&date=${encodeURIComponent(date)}`;
+
+      const ownerText = `New Booking 🎉
+ID: ${bookingId}
+Name: ${name}
+Service: ${service}
+Date: ${date}
+WhatsApp: ${whatsapp}
+Insta: ${insta || '-'}
+Message: ${message || '-'}
+
+Approve: ${approveLink}`;
+
+      // Open WhatsApp prefill to owner so customer can send it. This helps owner get instant notification without backend.
+      // Note: This opens a new tab/window with WhatsApp chat to the owner and prefilled text. The user must click Send (browser limitation).
+      const waUrl = `https://wa.me/${OWNER_WHATSAPP.replace(/[^+0-9]/g,'')}?text=${encodeURIComponent(ownerText)}`;
+      window.open(waUrl,'_blank');
+
+      // Save booking to localStorage (so owner approval page can show something if opened from same device)
+      const stored = JSON.parse(localStorage.getItem('bookings'||'[]')) || [];
+      stored.push({id:bookingId,name,whatsapp,date,service,insta,message,ts:Date.now()});
+      localStorage.setItem('bookings',JSON.stringify(stored));
+
+      // reset form a bit
+      form.name.value='';form.insta.value='';form.date.value='';form.message.value='';
+
+    });
+
+    // Modal helpers
+    function openModal(title, body){
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalBody').innerText = body;
+      document.getElementById('modal').classList.add('open');
+    }
+    document.getElementById('modalClose').addEventListener('click', ()=>{
+      document.getElementById('modal').classList.remove('open');
+    });
+
+    // Toast helper
+    function showToast(txt){
+      const t = document.getElementById('toast');
+      t.innerText = txt;
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'),4500);
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a=>{
+      a.addEventListener('click', e=>{
+        const href = a.getAttribute('href');
+        if(href.length>1){
+          e.preventDefault();
+          document.querySelector(href).scrollIntoView({behavior:'smooth',block:'start'});
+        }
+      })
+    })
+
+    // Small: update social links if user wants to change quickly
+    document.getElementById('instaLink').href = 'https://www.instagram.com/cosmetologist.kiran?igsh=ejNoNnU3eWoydGc1';
+    document.getElementById('fbLink').href = 'https://facebook.com/yourpage';
+    document.getElementById('waOwner').href = `https://wa.me/${OWNER_WHATSAPP.replace(/[^+0-9]/g,'')}`;
+
+  </script>
 </body>
 </html>
